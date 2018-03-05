@@ -1,0 +1,38 @@
+{
+  "name": "@scvo/router-destination-handlebars",
+  "version": "0.0.4",
+  "description": "SCVO=>Router destination for handlebars",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cleanup": "rm -rf ./dist",
+    "build": "npm run cleanup;tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scvodigital/router-destination-handlebars.git"
+  },
+  "keywords": [
+    "SCVO=>Router",
+    "SCVO",
+    "Router",
+    "Handlebars",
+    "Destination"
+  ],
+  "author": "Matthew Wilkes (SCVO)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/scvodigital/router-destination-handlebars/issues"
+  },
+  "homepage": "https://github.com/scvodigital/router-detination-handlebars#readme",
+  "dependencies": {
+    "clayhandlebars": "^4.0.0",
+    "dot-object": "^1.7.0",
+    "@scvo/router": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/dot-object": "^1.5.0",
+    "@types/node": "^9.4.6"
+  }
+}
