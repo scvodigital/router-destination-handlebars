@@ -1,10 +1,9 @@
 import { IRouterDestination, IRouteMatch, IRouterResponse } from '@scvo/router';
 export declare class HandlebarsRouterDestination implements IRouterDestination {
-    routerLayouts: IRouterLayouts;
     name: string;
-    constructor(routerLayouts: IRouterLayouts, handlebarsHelpers: IHandlebarsHelpers);
+    constructor(handlebarsHelpers: IHandlebarsHelpers);
     execute(routeMatch: IRouteMatch): Promise<IRouterResponse>;
-    private getLayouts(routeLayouts, url);
+    private getLayouts(routerLayouts, routeLayouts, url);
 }
 export interface IRouterLayouts {
     default: IRouterLayout;

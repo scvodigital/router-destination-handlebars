@@ -38,8 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var hbs = require('clayhandlebars')();
 var router_1 = require("@scvo/router");
 var HandlebarsRouterDestination = /** @class */ (function () {
-    function HandlebarsRouterDestination(routerLayouts, handlebarsHelpers) {
-        this.routerLayouts = routerLayouts;
+    function HandlebarsRouterDestination(handlebarsHelpers) {
         this.name = "handlebars";
         router_1.Helpers.register(hbs);
         Object.keys(handlebarsHelpers).forEach(function (name) {
@@ -49,11 +48,16 @@ var HandlebarsRouterDestination = /** @class */ (function () {
     HandlebarsRouterDestination.prototype.execute = function (routeMatch) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
-            var routeLayouts, layouts, sections, template, compiled, response;
+            var routerLayouts, routeLayouts, layouts, partials, sections, template, compiled, response;
             return __generator(this, function (_a) {
                 try {
+                    routerLayouts = routeMatch.context.metaData.handlebarsLayouts;
                     routeLayouts = routeMatch.route.destination.config;
-                    layouts = this.getLayouts(routeLayouts, routeMatch.request.fullUrl);
+                    layouts = this.getLayouts(routerLayouts, routeLayouts, routeMatch.request.fullUrl);
+                    partials = routeMatch.context.metaData.handlebarsPartials;
+                    Object.keys(partials).forEach(function (name) {
+                        hbs.registerPartial(name, partials[name]);
+                    });
                     sections = {};
                     Object.keys(layouts.routeLayout).forEach(function (sectionName) {
                         var template = layouts.routeLayout[sectionName];
@@ -86,16 +90,15 @@ var HandlebarsRouterDestination = /** @class */ (function () {
             });
         });
     };
-    HandlebarsRouterDestination.prototype.getLayouts = function (routeLayouts, url) {
-        var _this = this;
+    HandlebarsRouterDestination.prototype.getLayouts = function (routerLayouts, routeLayouts, url) {
         try {
             var layoutName = 'default';
             //console.log('#### ROUTEMATCH.getLayoutName() -> Getting layout name');
             Object.keys(routeLayouts).forEach(function (name) {
                 if (name === 'default' || layoutName !== 'default')
                     return;
-                if (_this.routerLayouts.hasOwnProperty(name)) {
-                    var pattern = _this.routerLayouts[name].pattern;
+                if (routerLayouts.hasOwnProperty(name)) {
+                    var pattern = routerLayouts[name].pattern;
                     var regex = new RegExp(pattern, 'ig');
                     if (regex.test(url)) {
                         layoutName = name;
@@ -104,7 +107,7 @@ var HandlebarsRouterDestination = /** @class */ (function () {
             });
             //console.log('#### ROUTEMATCH.getLayoutName() -> Layout name:', this.layoutName);
             return {
-                routerLayout: this.routerLayouts[layoutName],
+                routerLayout: routerLayouts[layoutName],
                 routeLayout: routeLayouts[layoutName]
             };
         }

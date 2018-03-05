@@ -5,7 +5,7 @@ import { IContext, IRouterDestination, IRouteMatch, Helpers, IRouterResponse } f
 export class HandlebarsRouterDestination implements IRouterDestination {
     name: string = "handlebars";
 
-    constructor(public routerLayouts: IRouterLayouts, handlebarsHelpers: IHandlebarsHelpers) {
+    constructor(handlebarsHelpers: IHandlebarsHelpers) {
         Helpers.register(hbs);
         Object.keys(handlebarsHelpers).forEach((name) => {
             hbs.registerHelper(name, handlebarsHelpers[name]);
@@ -14,9 +14,14 @@ export class HandlebarsRouterDestination implements IRouterDestination {
 
     public async execute(routeMatch: IRouteMatch): Promise<IRouterResponse> {
         try {
-            //console.log('#### ROUTEMATCH.render() -> Rendering');
+            var routerLayouts: IRouterLayouts = routeMatch.context.metaData.handlebarsLayouts;
             var routeLayouts: IRouteLayouts = routeMatch.route.destination.config;
-            var layouts: ILayoutPair = this.getLayouts(routeLayouts, routeMatch.request.fullUrl);
+            var layouts: ILayoutPair = this.getLayouts(routerLayouts, routeLayouts, routeMatch.request.fullUrl);
+
+            var partials = routeMatch.context.metaData.handlebarsPartials;
+            Object.keys(partials).forEach((name: string) => {
+                hbs.registerPartial(name, partials[name]);
+            });
 
             var sections: IRouteLayout = {};
             Object.keys(layouts.routeLayout).forEach((sectionName: string) => {
@@ -26,9 +31,6 @@ export class HandlebarsRouterDestination implements IRouterDestination {
                 sections[sectionName] = output;
             });
 
-            //console.log('#### ROUTEMATCH.render() -> Route templates rendered');
-            //console.log('#### ROUTEMATCH.render() -> Rendering  full layout');
-            
             var template = layouts.routerLayout.template;
             template = template.replace(/(<!--{section:)([a-z0-9_-]+)(}-->)/ig, (match, m1, m2, m3) => {
                 if (sections.hasOwnProperty(m2)) {
@@ -39,8 +41,6 @@ export class HandlebarsRouterDestination implements IRouterDestination {
             });
             var compiled = hbs.compile(template);
 
-            //console.log('#### ROUTEMATCH.render() -> All rendered');
-           
             var response: IRouterResponse = {
                 statusCode: 200,
                 contentType: layouts.routerLayout.contentType,
@@ -54,15 +54,15 @@ export class HandlebarsRouterDestination implements IRouterDestination {
         }
     }
     
-    private getLayouts(routeLayouts: IRouteLayouts, url: string): ILayoutPair {
+    private getLayouts(routerLayouts: IRouterLayouts, routeLayouts: IRouteLayouts, url: string): ILayoutPair {
         try {
             var layoutName = 'default';
 
             //console.log('#### ROUTEMATCH.getLayoutName() -> Getting layout name');
             Object.keys(routeLayouts).forEach((name: string) => {
                 if (name === 'default' || layoutName !== 'default') return;
-                if (this.routerLayouts.hasOwnProperty(name)) {
-                    var pattern = this.routerLayouts[name].pattern;
+                if (routerLayouts.hasOwnProperty(name)) {
+                    var pattern = routerLayouts[name].pattern;
                     var regex = new RegExp(pattern, 'ig');
                     if (regex.test(url)) {
                         layoutName = name;
@@ -71,7 +71,7 @@ export class HandlebarsRouterDestination implements IRouterDestination {
             });
             //console.log('#### ROUTEMATCH.getLayoutName() -> Layout name:', this.layoutName);
             return {
-                routerLayout: this.routerLayouts[layoutName],
+                routerLayout: routerLayouts[layoutName],
                 routeLayout: routeLayouts[layoutName]   
             };
         } catch(err) {
