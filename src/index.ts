@@ -44,7 +44,9 @@ export class HandlebarsRouterDestination implements IRouterDestination {
             var response: IRouterResponse = {
                 statusCode: 200,
                 contentType: layouts.routerLayout.contentType,
-                contentBody: compiled(routeMatch)
+                body: compiled(routeMatch),
+                headers: {},
+                cookies: routeMatch.request.cookies
             };
 
             return response;

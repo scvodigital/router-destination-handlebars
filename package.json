@@ -1,6 +1,6 @@
 {
   "name": "@scvo/router-destination-handlebars",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "SCVO=>Router destination for handlebars",
   "main": "dist/index.js",
   "scripts": {
@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/scvodigital/router-detination-handlebars#readme",
   "dependencies": {
-    "@scvo/router": "1.1.1",
+    "@scvo/router": "1.1.2",
     "clayhandlebars": "^4.0.0",
     "dot-object": "^1.7.0"
   },
