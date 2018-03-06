@@ -27,7 +27,7 @@ export class HandlebarsRouterDestination implements IRouterDestination {
             Object.keys(layouts.routeLayout).forEach((sectionName: string) => {
                 var template = layouts.routeLayout[sectionName];
                 var compiled = hbs.compile(template);
-                var output = compiled(this);
+                var output = compiled(routeMatch);
                 sections[sectionName] = output;
             });
 

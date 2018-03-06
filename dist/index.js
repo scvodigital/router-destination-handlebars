@@ -47,7 +47,6 @@ var HandlebarsRouterDestination = /** @class */ (function () {
     }
     HandlebarsRouterDestination.prototype.execute = function (routeMatch) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
             var routerLayouts, routeLayouts, layouts, partials, sections, template, compiled, response;
             return __generator(this, function (_a) {
                 try {
@@ -62,7 +61,7 @@ var HandlebarsRouterDestination = /** @class */ (function () {
                     Object.keys(layouts.routeLayout).forEach(function (sectionName) {
                         var template = layouts.routeLayout[sectionName];
                         var compiled = hbs.compile(template);
-                        var output = compiled(_this);
+                        var output = compiled(routeMatch);
                         sections[sectionName] = output;
                     });
                     template = layouts.routerLayout.template;
