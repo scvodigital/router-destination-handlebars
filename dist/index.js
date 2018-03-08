@@ -47,7 +47,7 @@ var HandlebarsRouterDestination = /** @class */ (function () {
     }
     HandlebarsRouterDestination.prototype.execute = function (routeMatch) {
         return __awaiter(this, void 0, void 0, function () {
-            var routerLayouts, routeLayouts, layouts, partials, sections, template, compiled, response;
+            var routerLayouts, routeLayouts, layouts, partials, sections, template, compiled, output, response;
             return __generator(this, function (_a) {
                 try {
                     routerLayouts = routeMatch.context.metaData.handlebarsLayouts;
@@ -59,25 +59,60 @@ var HandlebarsRouterDestination = /** @class */ (function () {
                     });
                     sections = {};
                     Object.keys(layouts.routeLayout).forEach(function (sectionName) {
-                        var template = layouts.routeLayout[sectionName];
-                        var compiled = hbs.compile(template);
-                        var output = compiled(routeMatch);
-                        sections[sectionName] = output;
-                    });
-                    template = layouts.routerLayout.template;
-                    template = template.replace(/(<!--{section:)([a-z0-9_-]+)(}-->)/ig, function (match, m1, m2, m3) {
-                        if (sections.hasOwnProperty(m2)) {
-                            return sections[m2];
+                        var template, compiled, output;
+                        try {
+                            template = layouts.routeLayout[sectionName];
+                            compiled = hbs.compile(template);
+                            output = compiled(routeMatch);
+                            sections[sectionName] = output;
                         }
-                        else {
-                            return match;
+                        catch (err) {
+                            err = new router_1.RouteDestinationError(err, {
+                                statusCode: 500,
+                                sourceRoute: routeMatch,
+                                destination: routeMatch.route.destination,
+                                redirectTo: routeMatch.route.errorRoute,
+                                data: {
+                                    sectionName: sectionName,
+                                    template: !template ? undefined : template.length < 256 ? template : template.substr(0, 255),
+                                    compiled: !compiled ? undefined : compiled.length < 256 ? compiled : compiled.substr(0, 255),
+                                    output: !output ? undefined : output.length < 256 ? output : output.substr(0, 255)
+                                }
+                            });
+                            throw err;
                         }
                     });
-                    compiled = hbs.compile(template);
+                    try {
+                        template = layouts.routerLayout.template;
+                        compiled = hbs.compile(template);
+                        output = compiled(routeMatch);
+                        output = output.replace(/(<!--{section:)([a-z0-9_-]+)(}-->)/ig, function (match, m1, m2, m3) {
+                            if (sections.hasOwnProperty(m2)) {
+                                return sections[m2];
+                            }
+                            else {
+                                return match;
+                            }
+                        });
+                    }
+                    catch (err) {
+                        err = new router_1.RouteDestinationError(err, {
+                            statusCode: 500,
+                            sourceRoute: routeMatch,
+                            destination: routeMatch.route.destination,
+                            redirectTo: routeMatch.route.errorRoute,
+                            data: {
+                                template: !template ? undefined : template.length < 256 ? template : template.substr(0, 255),
+                                compiled: !compiled ? undefined : compiled.length < 256 ? compiled : compiled.substr(0, 255),
+                                output: !output ? undefined : output.length < 256 ? output : output.substr(0, 255)
+                            }
+                        });
+                        throw err;
+                    }
                     response = {
                         statusCode: 200,
                         contentType: layouts.routerLayout.contentType,
-                        body: compiled(routeMatch),
+                        body: output,
                         headers: {},
                         cookies: routeMatch.request.cookies
                     };

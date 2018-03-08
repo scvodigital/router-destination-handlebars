@@ -1,6 +1,9 @@
 const hbs = require('clayhandlebars')();
 
-import { IContext, IRouterDestination, IRouteMatch, Helpers, IRouterResponse } from '@scvo/router';
+import { 
+    IContext, IRouterDestination, IRouteMatch, 
+    Helpers, IRouterResponse, RouteDestinationError
+} from '@scvo/router';
 
 export class HandlebarsRouterDestination implements IRouterDestination {
     name: string = "handlebars";
@@ -25,26 +28,60 @@ export class HandlebarsRouterDestination implements IRouterDestination {
 
             var sections: IRouteLayout = {};
             Object.keys(layouts.routeLayout).forEach((sectionName: string) => {
-                var template = layouts.routeLayout[sectionName];
-                var compiled = hbs.compile(template);
-                var output = compiled(routeMatch);
-                sections[sectionName] = output;
-            });
-
-            var template = layouts.routerLayout.template;
-            template = template.replace(/(<!--{section:)([a-z0-9_-]+)(}-->)/ig, (match, m1, m2, m3) => {
-                if (sections.hasOwnProperty(m2)) {
-                    return sections[m2];
-                } else { 
-                    return match;
+                var template, compiled, output;
+                try {
+                    template = layouts.routeLayout[sectionName];
+                    compiled = hbs.compile(template);
+                    output = compiled(routeMatch);
+                    sections[sectionName] = output;
+                } catch(err) {
+                    err = new RouteDestinationError(err, {
+                        statusCode: 500,
+                        sourceRoute: routeMatch,
+                        destination: routeMatch.route.destination,
+                        redirectTo: routeMatch.route.errorRoute,
+                        data: { 
+                            sectionName: sectionName, 
+                            template: !template ? undefined : template.length < 256 ? template : template.substr(0, 255), 
+                            compiled: !compiled ? undefined : compiled.length < 256 ? compiled : compiled.substr(0, 255), 
+                            output: !output ? undefined : output.length < 256 ? output : output.substr(0, 255) 
+                        }
+                    });
+                    throw err;
                 }
             });
-            var compiled = hbs.compile(template);
+
+            var template, compiled, output;
+            try {
+                template = layouts.routerLayout.template;
+                compiled = hbs.compile(template);
+                output = compiled(routeMatch);
+                output = output.replace(/(<!--{section:)([a-z0-9_-]+)(}-->)/ig, (match, m1, m2, m3) => {
+                    if (sections.hasOwnProperty(m2)) {
+                        return sections[m2];
+                    } else { 
+                        return match;
+                    }
+                });
+            } catch(err) {
+                err = new RouteDestinationError(err, {
+                    statusCode: 500,
+                    sourceRoute: routeMatch,
+                    destination: routeMatch.route.destination,
+                    redirectTo: routeMatch.route.errorRoute,
+                    data: { 
+                        template: !template ? undefined : template.length < 256 ? template : template.substr(0, 255), 
+                        compiled: !compiled ? undefined : compiled.length < 256 ? compiled : compiled.substr(0, 255), 
+                        output: !output ? undefined : output.length < 256 ? output : output.substr(0, 255) 
+                    }
+                });
+                throw err;
+            }
 
             var response: IRouterResponse = {
                 statusCode: 200,
                 contentType: layouts.routerLayout.contentType,
-                body: compiled(routeMatch),
+                body: output,
                 headers: {},
                 cookies: routeMatch.request.cookies
             };
