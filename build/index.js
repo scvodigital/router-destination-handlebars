@@ -1,4 +1,14 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -35,36 +45,40 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/* tslint:disable:no-any */
 var hbs = require('clayhandlebars')();
 var router_1 = require("@scvo/router");
-var HandlebarsRouterDestination = /** @class */ (function () {
+var HandlebarsRouterDestination = /** @class */ (function (_super) {
+    __extends(HandlebarsRouterDestination, _super);
     function HandlebarsRouterDestination(handlebarsHelpers) {
-        this.name = "handlebars";
+        var _this = _super.call(this) || this;
+        _this.name = 'handlebars';
         router_1.Helpers.register(hbs);
         Object.keys(handlebarsHelpers).forEach(function (name) {
             hbs.registerHelper(name, handlebarsHelpers[name]);
         });
+        return _this;
     }
     HandlebarsRouterDestination.prototype.execute = function (routeMatch) {
         return __awaiter(this, void 0, void 0, function () {
-            var routerLayouts, routeLayouts, layouts, partials, sections, template, compiled, output, response;
+            var routerLayouts, routeLayouts, layouts_1, partials_1, sections_1, template, compiled, output, response;
             return __generator(this, function (_a) {
                 try {
                     routerLayouts = routeMatch.context.metaData.handlebarsLayouts;
                     routeLayouts = routeMatch.route.destination.config;
-                    layouts = this.getLayouts(routerLayouts, routeLayouts, routeMatch.request.fullUrl);
-                    partials = routeMatch.context.metaData.handlebarsPartials;
-                    Object.keys(partials).forEach(function (name) {
-                        hbs.registerPartial(name, partials[name]);
+                    layouts_1 = this.getLayouts(routerLayouts, routeLayouts, routeMatch.request.fullUrl);
+                    partials_1 = routeMatch.context.metaData.handlebarsPartials;
+                    Object.keys(partials_1).forEach(function (name) {
+                        hbs.registerPartial(name, partials_1[name]);
                     });
-                    sections = {};
-                    Object.keys(layouts.routeLayout).forEach(function (sectionName) {
-                        var template, compiled, output;
+                    sections_1 = {};
+                    Object.keys(layouts_1.routeLayout).forEach(function (sectionName) {
+                        var template = '', compiled, output = '';
                         try {
-                            template = layouts.routeLayout[sectionName];
+                            template = layouts_1.routeLayout[sectionName];
                             compiled = hbs.compile(template);
                             output = compiled(routeMatch);
-                            sections[sectionName] = output;
+                            sections_1[sectionName] = output;
                         }
                         catch (err) {
                             err = new router_1.RouteDestinationError(err, {
@@ -74,21 +88,25 @@ var HandlebarsRouterDestination = /** @class */ (function () {
                                 redirectTo: routeMatch.route.errorRoute,
                                 data: {
                                     sectionName: sectionName,
-                                    template: !template ? undefined : template.length < 256 ? template : template.substr(0, 255),
-                                    compiled: !compiled ? undefined : compiled.length < 256 ? compiled : compiled.substr(0, 255),
-                                    output: !output ? undefined : output.length < 256 ? output : output.substr(0, 255)
+                                    template: template ?
+                                        template.length < 256 ? template : template.substr(0, 255) :
+                                        undefined,
+                                    output: output ?
+                                        output.length < 256 ? output : output.substr(0, 255) :
+                                        undefined
                                 }
                             });
                             throw err;
                         }
                     });
+                    template = '', compiled = void 0, output = '';
                     try {
-                        template = layouts.routerLayout.template;
+                        template = layouts_1.routerLayout.template;
                         compiled = hbs.compile(template);
                         output = compiled(routeMatch);
                         output = output.replace(/(<!--{section:)([a-z0-9_-]+)(}-->)/ig, function (match, m1, m2, m3) {
-                            if (sections.hasOwnProperty(m2)) {
-                                return sections[m2];
+                            if (sections_1.hasOwnProperty(m2)) {
+                                return sections_1[m2];
                             }
                             else {
                                 return match;
@@ -102,16 +120,19 @@ var HandlebarsRouterDestination = /** @class */ (function () {
                             destination: routeMatch.route.destination,
                             redirectTo: routeMatch.route.errorRoute,
                             data: {
-                                template: !template ? undefined : template.length < 256 ? template : template.substr(0, 255),
-                                compiled: !compiled ? undefined : compiled.length < 256 ? compiled : compiled.substr(0, 255),
-                                output: !output ? undefined : output.length < 256 ? output : output.substr(0, 255)
+                                template: template ?
+                                    template.length < 256 ? template : template.substr(0, 255) :
+                                    undefined,
+                                output: output ?
+                                    output.length < 256 ? output : output.substr(0, 255) :
+                                    undefined
                             }
                         });
                         throw err;
                     }
                     response = {
                         statusCode: 200,
-                        contentType: layouts.routerLayout.contentType,
+                        contentType: layouts_1.routerLayout.contentType,
                         body: output,
                         headers: {},
                         cookies: routeMatch.request.cookies
@@ -128,23 +149,24 @@ var HandlebarsRouterDestination = /** @class */ (function () {
     };
     HandlebarsRouterDestination.prototype.getLayouts = function (routerLayouts, routeLayouts, url) {
         try {
-            var layoutName = 'default';
-            //console.log('#### ROUTEMATCH.getLayoutName() -> Getting layout name');
+            var layoutName_1 = 'default';
+            // console.log('#### ROUTEMATCH.getLayoutName() -> Getting layout name');
             Object.keys(routeLayouts).forEach(function (name) {
-                if (name === 'default' || layoutName !== 'default')
+                if (name === 'default' || layoutName_1 !== 'default')
                     return;
                 if (routerLayouts.hasOwnProperty(name)) {
                     var pattern = routerLayouts[name].pattern;
                     var regex = new RegExp(pattern, 'ig');
                     if (regex.test(url)) {
-                        layoutName = name;
+                        layoutName_1 = name;
                     }
                 }
             });
-            //console.log('#### ROUTEMATCH.getLayoutName() -> Layout name:', this.layoutName);
+            // console.log('#### ROUTEMATCH.getLayoutName() -> Layout name:',
+            // this.layoutName);
             return {
-                routerLayout: routerLayouts[layoutName],
-                routeLayout: routeLayouts[layoutName]
+                routerLayout: routerLayouts[layoutName_1],
+                routeLayout: routeLayouts[layoutName_1]
             };
         }
         catch (err) {
@@ -153,6 +175,7 @@ var HandlebarsRouterDestination = /** @class */ (function () {
         }
     };
     return HandlebarsRouterDestination;
-}());
+}(router_1.RouterDestination));
 exports.HandlebarsRouterDestination = HandlebarsRouterDestination;
+/* tslint:enable:no-any */
 //# sourceMappingURL=index.js.map
