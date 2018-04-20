@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@scvo/router@1.1.16":
-  version "1.1.16"
-  resolved "https://registry.yarnpkg.com/@scvo/router/-/router-1.1.16.tgz#731e4aa58e26e0425f593da6c11ceb977de08e76"
+"@scvo/router@1.1.17":
+  version "1.1.17"
+  resolved "https://registry.yarnpkg.com/@scvo/router/-/router-1.1.17.tgz#cd11f0a747ceef50a421ad92df8edd67a6bb859f"
   dependencies:
     clayhandlebars "^4.0.0"
     deep-extend "^0.5.0"
