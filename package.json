@@ -1,6 +1,6 @@
 {
   "name": "@scvo/router-destination-handlebars",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "SCVO=>Router destination for handlebars",
   "main": "./build/index",
   "typings": "./build/index",
