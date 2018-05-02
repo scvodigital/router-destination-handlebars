@@ -66,7 +66,7 @@ export class HandlebarsRouterDestination extends RouterDestination {
                 var html = sections[m2];
                 if (m3) {
                   var instance = m3.replace(/\[|\]/g, '');
-                  html = html.replace(/(<!--{instance}-->/ig, instance);
+                  html = html.replace(/(<!--{instance}-->)/ig, instance);
                 }
                 return html;
               } else {
