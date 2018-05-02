@@ -61,9 +61,14 @@ export class HandlebarsRouterDestination extends RouterDestination {
         compiled = hbs.compile(template);
         output = compiled(routeMatch);
         output = output.replace(
-            /(<!--{section:)([a-z0-9_-]+)(}-->)/ig, (match, m1, m2, m3) => {
+            /(<!--{section:)([a-z0-9_-]+)(\[[a-z0-9_-]+\])?(}-->)/ig, (match, m1, m2, m3, m4) => {
               if (sections.hasOwnProperty(m2)) {
-                return sections[m2];
+                var html = sections[m2];
+                if (m3) {
+                  var instance = m3.replace(/\[|\]/g, '');
+                  html = html.replace(/(<!--{instance}-->/ig, instance);
+                }
+                return html;
               } else {
                 return match;
               }
