@@ -58,9 +58,7 @@ export class HandlebarsRouterDestination extends RouterDestination {
       let template = '', compiled: (data: RouteMatch) => string, output = '';
       try {
         template = layouts.routerLayout.template;
-        compiled = hbs.compile(template);
-        output = compiled(routeMatch);
-        output = output.replace(
+        template = template.replace(
             /(<!--{section:)([a-z0-9_-]+)(\[[a-z0-9_-]+\])?(}-->)/ig, (match, m1, m2, m3, m4) => {
               if (sections.hasOwnProperty(m2)) {
                 var html = sections[m2];
@@ -73,6 +71,8 @@ export class HandlebarsRouterDestination extends RouterDestination {
                 return match;
               }
             });
+        compiled = hbs.compile(template);
+        output = compiled(routeMatch);
       } catch (err) {
         err = new RouteDestinationError(err, {
           statusCode: 500,
