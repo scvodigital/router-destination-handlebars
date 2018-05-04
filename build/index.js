@@ -102,9 +102,7 @@ var HandlebarsRouterDestination = /** @class */ (function (_super) {
                     template = '', compiled = void 0, output = '';
                     try {
                         template = layouts_1.routerLayout.template;
-                        compiled = hbs.compile(template);
-                        output = compiled(routeMatch);
-                        output = output.replace(/(<!--{section:)([a-z0-9_-]+)(\[[a-z0-9_-]+\])?(}-->)/ig, function (match, m1, m2, m3, m4) {
+                        template = template.replace(/(<!--{section:)([a-z0-9_-]+)(\[[a-z0-9_-]+\])?(}-->)/ig, function (match, m1, m2, m3, m4) {
                             if (sections_1.hasOwnProperty(m2)) {
                                 var html = sections_1[m2];
                                 if (m3) {
@@ -117,6 +115,8 @@ var HandlebarsRouterDestination = /** @class */ (function (_super) {
                                 return match;
                             }
                         });
+                        compiled = hbs.compile(template);
+                        output = compiled(routeMatch);
                     }
                     catch (err) {
                         err = new router_1.RouteDestinationError(err, {
