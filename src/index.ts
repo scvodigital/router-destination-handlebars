@@ -32,7 +32,7 @@ export class HandlebarsRouterDestination extends RouterDestination {
         let template = '', compiled: (data: RouteMatch) => string, output = '';
         try {
           template = layouts.routeLayout[sectionName];
-          template = template.replace(/{{instance_id}}/ig, '{-{intance_id}-}');
+          template = template.replace(/{{instance_id}}/ig, '{-{instance_id}-}');
           compiled = hbs.compile(template);
           output = compiled(routeMatch);
           sections[sectionName] = output;
@@ -67,7 +67,7 @@ export class HandlebarsRouterDestination extends RouterDestination {
                 var html = sections[m2];
                 if (m3) {
                   var instance = m3.replace(/\[|\]/g, '');
-                  html = html.replace(/{{instance_id}}/ig, instance);
+                  html = html.replace(/{-{instance_id}-}/ig, instance);
                 }
                 return html;
               } else {
