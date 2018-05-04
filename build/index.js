@@ -110,7 +110,7 @@ var HandlebarsRouterDestination = /** @class */ (function (_super) {
                                 var html = sections_1[m2];
                                 if (m3) {
                                     var instance = m3.replace(/\[|\]/g, '');
-                                    html = html.replace(/{{instance_id}})/ig, instance);
+                                    html = html.replace(/{{instance_id}}/ig, instance);
                                 }
                                 return html;
                             }
