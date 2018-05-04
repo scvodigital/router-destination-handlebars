@@ -76,7 +76,7 @@ var HandlebarsRouterDestination = /** @class */ (function (_super) {
                         var template = '', compiled, output = '';
                         try {
                             template = layouts_1.routeLayout[sectionName];
-                            template = template.replace(/{{instance_id}}/ig, '{-{intance_id}-}');
+                            template = template.replace(/{{instance_id}}/ig, '{-{instance_id}-}');
                             compiled = hbs.compile(template);
                             output = compiled(routeMatch);
                             sections_1[sectionName] = output;
@@ -110,7 +110,7 @@ var HandlebarsRouterDestination = /** @class */ (function (_super) {
                                 var html = sections_1[m2];
                                 if (m3) {
                                     var instance = m3.replace(/\[|\]/g, '');
-                                    html = html.replace(/{{instance_id}}/ig, instance);
+                                    html = html.replace(/{-{instance_id}-}/ig, instance);
                                 }
                                 return html;
                             }
