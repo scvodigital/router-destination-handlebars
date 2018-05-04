@@ -58,21 +58,22 @@ export class HandlebarsRouterDestination extends RouterDestination {
       let template = '', compiled: (data: RouteMatch) => string, output = '';
       try {
         template = layouts.routerLayout.template;
-        template = template.replace(
+        template = template.replace(/{{instance_id}}/ig, '{-{instance_id}-}');
+        compiled = hbs.compile(template);
+        output = compiled(routeMatch);
+        output = output.replace(
             /(<!--{section:)([a-z0-9_-]+)(\[[a-z0-9_-]+\])?(}-->)/ig, (match, m1, m2, m3, m4) => {
               if (sections.hasOwnProperty(m2)) {
                 var html = sections[m2];
                 if (m3) {
                   var instance = m3.replace(/\[|\]/g, '');
-                  html = html.replace(/{{instance_id}}/ig, instance);
+                  html = html.replace(/{-{instance_id}-}/ig, instance);
                 }
                 return html;
               } else {
                 return match;
               }
             });
-        compiled = hbs.compile(template);
-        output = compiled(routeMatch);
       } catch (err) {
         err = new RouteDestinationError(err, {
           statusCode: 500,
